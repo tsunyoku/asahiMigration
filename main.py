@@ -103,4 +103,4 @@ input('Please be aware that before running this script, you should have made a b
 loop = asyncio.get_event_loop()
 loop.run_until_complete(startup())
 
-#loop.run_until_complete(convert_users())
+loop.run_until_complete(convert_users())
