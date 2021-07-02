@@ -45,7 +45,6 @@ async def convert_priv(old_priv):
 
     return new_priv
 
-
 async def convert_users():
     gulag_users = await glob.sql.fetchall(f'SELECT * FROM users')
 
@@ -72,8 +71,7 @@ async def convert_users():
         name = user['name']
         safe_name = user['safe_name']
         email = user['email']
-        pw = user[
-            'pw_bcrypt']  # absolutely cursed cus asahi doesn't use bcrypt, we will do some trolling in asahi repo for this
+        pw = user['pw_bcrypt']  # absolutely cursed cus asahi doesn't use bcrypt, we will do some trolling in asahi repo for this
         country = user['country']
 
         gulag_priv = gulagPrivileges(user['priv'])
