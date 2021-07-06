@@ -339,6 +339,60 @@ async def convert_scores():
         await glob.postgres.execute(f"ALTER TABLE ONLY public.{asahi_table} ALTER COLUMN id SET DEFAULT nextval('{asahi_table}_id_seq'::regclass);")
         log(f'Converted all scores on table {asahi_table}!')
 
+async def convert_maps():
+    gulag_maps = await glob.sql.fetchall('SELECT * FROM maps')
+    
+    for _map in gulag_maps:
+        id = _map['id']
+        sid = _map['set_id']
+        md5 = _map['md5']
+        
+        bpm = _map['bpm']
+        cs = _map['cs']
+        ar = _map['ar']
+        od = _map['od']
+        hp = _map['hp']
+        sr = _map['diff']
+        mode = _map['mode']
+        
+        artist = _map['artist']
+        title = _map['title']
+        diff = _map['version']
+        mapper = _map['creator']
+        status = _map['status']
+        
+        frozen = _map['frozen']
+        update = _map['last_update'].timestamp()
+        nc = _map['last_check'] # not sure if current gulag has this named the same?
+        
+        plays = _map['plays']
+        passes = _map['passes']
+        
+        await glob.postgres.execute(
+            'INSERT INTO maps ('
+            'id, sid, md5, '
+            'bpm, cs, ar, od, hp, sr, mode, '
+            'artist, title, diff, mapper, status, '
+            'frozen, update, nc, '
+            'plays, passes'
+            ') VALUES ('
+            '$1, $2, $3, '
+            '$4, $5, $6, $7, $8, $9, $10, '
+            '$11, $12, $13, $14, $15, '
+            '$16, $17, $18, '
+            '$19, $20'
+            ')',
+            id, sid, md5,
+            bpm, cs, ar, od, hp, sr, mode,
+            artist, title, diff, mapper, status,
+            frozen, update, nc,
+            plays, passes
+        )
+        
+        log(f'Converted {artist} - {title} [{diff}] into maps table!')
+        
+    log('Converted all maps!')
+
 input(
     'Please be aware that before running this script, you should have made a blank database in PostgreSQL for Asahi and have a valid gulag database in MySQL. '
     'If not, please sort that now and run again (Ctrl + C to exit). '
@@ -352,5 +406,6 @@ loop.run_until_complete(startup())
 loop.run_until_complete(convert_users())
 loop.run_until_complete(convert_stats())
 loop.run_until_complete(convert_scores())
+loop.run_until_complete(convert_maps())
 loop.run_until_complete(close_dbs())
 log(f'Migration complete in {(time.time() - start) // 60:.2f} minutes!')
