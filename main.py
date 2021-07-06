@@ -9,6 +9,7 @@ import asyncpg
 import asyncio
 import uvloop
 import os
+import time
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -260,7 +261,12 @@ async def convert_stats():
         )
         
         log(f'Inserted user ID {id} into stats database!')
-        
+
+    # fix auto increment
+    last_id = gulag_stats[-1]['id']
+    await glob.postgres.execute(f'CREATE SEQUENCE stats_id_seq START {last_id + 1};')
+    await glob.postgres.execute("ALTER TABLE ONLY public.stats ALTER COLUMN id SET DEFAULT nextval('stats_id_seq'::regclass);")
+
     log('All stats converted!')
     
 async def convert_scores():
@@ -326,7 +332,11 @@ async def convert_scores():
             )
             
             log(f'Converted score ID {id} on table {asahi_table}!')
-            
+
+        # fix auto increment
+        last_id = scores[-1]['id']
+        await glob.postgres.execute(f'CREATE SEQUENCE {asahi_table}_id_seq START {last_id + 1};')
+        await glob.postgres.execute(f"ALTER TABLE ONLY public.{asahi_table} ALTER COLUMN id SET DEFAULT nextval('{asahi_table}_id_seq'::regclass);")
         log(f'Converted all scores on table {asahi_table}!')
 
 input(
@@ -335,6 +345,7 @@ input(
     'Otherwise, press any key to continue!'
 )
 
+start = time.time()
 loop = asyncio.get_event_loop()
 loop.run_until_complete(import_db())
 loop.run_until_complete(startup())
@@ -342,4 +353,4 @@ loop.run_until_complete(convert_users())
 loop.run_until_complete(convert_stats())
 loop.run_until_complete(convert_scores())
 loop.run_until_complete(close_dbs())
-log('Migration complete!')
+log(f'Migration complete in {(time.time() - start) // 60:.2f} minutes!')
