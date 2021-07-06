@@ -37,6 +37,24 @@ CREATE TABLE public.channels (
 
 ALTER TABLE public.channels OWNER TO tsunyoku;
 
+CREATE TABLE public.user_hashes(
+                                   uid integer NOT NULL,
+                                   mac_address text NOT NULL,
+                                   uninstall_id text NOT NULL,
+                                   disk_serial text NOT NULL,
+                                   ip text NOT NULL,
+                                   occurrences integer DEFAULT 1 NOT NULL,
+                                   PRIMARY KEY (uid, mac_address, uninstall_id, disk_serial, ip)
+);
+
+CREATE TABLE public.requests(
+    id SERIAL,
+    requester text NOT NULL,
+    map integer NOT NULL,
+    status integer NOT NULL,
+    mode integer DEFAULT 0 NOT NULL,
+    UNIQUE (map)
+);
 
 --
 -- Name: friends; Type: TABLE; Schema: public; Owner: tsunyoku
@@ -56,55 +74,63 @@ ALTER TABLE public.friends OWNER TO tsunyoku;
 --
 
 CREATE TABLE public.stats (
-                              id integer NOT NULL,
-                              rscore_std integer DEFAULT 0 NOT NULL,
+                              id bigint NOT NULL,
+                              rscore_std bigint DEFAULT 0 NOT NULL,
                               acc_std real DEFAULT 0.00 NOT NULL,
-                              pc_std integer DEFAULT 0 NOT NULL,
-                              tscore_std integer DEFAULT 0 NOT NULL,
-                              pp_std integer DEFAULT 0 NOT NULL,
-                              rscore_mania integer DEFAULT 0 NOT NULL,
+                              pc_std bigint DEFAULT 0 NOT NULL,
+                              tscore_std bigint DEFAULT 0 NOT NULL,
+                              pp_std bigint DEFAULT 0 NOT NULL,
+                              rscore_mania bigint DEFAULT 0 NOT NULL,
                               acc_mania real DEFAULT 0.00 NOT NULL,
-                              pc_mania integer DEFAULT 0 NOT NULL,
-                              tscore_mania integer DEFAULT 0 NOT NULL,
-                              rscore_catch integer DEFAULT 0 NOT NULL,
+                              pc_mania bigint DEFAULT 0 NOT NULL,
+                              tscore_mania bigint DEFAULT 0 NOT NULL,
+                              rscore_catch bigint DEFAULT 0 NOT NULL,
                               acc_catch real DEFAULT 0.00 NOT NULL,
-                              pc_catch integer DEFAULT 0 NOT NULL,
-                              tscore_catch integer DEFAULT 0 NOT NULL,
-                              rscore_taiko integer DEFAULT 0 NOT NULL,
+                              pc_catch bigint DEFAULT 0 NOT NULL,
+                              tscore_catch bigint DEFAULT 0 NOT NULL,
+                              rscore_taiko bigint DEFAULT 0 NOT NULL,
                               acc_taiko real DEFAULT 0.00 NOT NULL,
-                              pc_taiko integer DEFAULT 0 NOT NULL,
-                              tscore_taiko integer DEFAULT 0 NOT NULL,
-                              pp_taiko integer DEFAULT 0 NOT NULL,
-                              pp_catch integer DEFAULT 0 NOT NULL,
-                              pp_mania integer DEFAULT 0 NOT NULL,
-                              rscore_catch_rx integer DEFAULT 0 NOT NULL,
+                              pc_taiko bigint DEFAULT 0 NOT NULL,
+                              tscore_taiko bigint DEFAULT 0 NOT NULL,
+                              pp_taiko bigint DEFAULT 0 NOT NULL,
+                              pp_catch bigint DEFAULT 0 NOT NULL,
+                              pp_mania bigint DEFAULT 0 NOT NULL,
+                              rscore_catch_rx bigint DEFAULT 0 NOT NULL,
                               acc_catch_rx real DEFAULT 0.00 NOT NULL,
-                              pc_catch_rx integer DEFAULT 0 NOT NULL,
-                              tscore_catch_rx integer DEFAULT 0 NOT NULL,
-                              rscore_taiko_rx integer DEFAULT 0 NOT NULL,
+                              pc_catch_rx bigint DEFAULT 0 NOT NULL,
+                              tscore_catch_rx bigint DEFAULT 0 NOT NULL,
+                              rscore_taiko_rx bigint DEFAULT 0 NOT NULL,
                               acc_taiko_rx real DEFAULT 0.00 NOT NULL,
-                              pc_taiko_rx integer DEFAULT 0 NOT NULL,
-                              tscore_taiko_rx integer DEFAULT 0 NOT NULL,
-                              rscore_std_ap integer DEFAULT 0 NOT NULL,
+                              pc_taiko_rx bigint DEFAULT 0 NOT NULL,
+                              tscore_taiko_rx bigint DEFAULT 0 NOT NULL,
+                              rscore_std_ap bigint DEFAULT 0 NOT NULL,
                               acc_std_ap real DEFAULT 0.00 NOT NULL,
-                              pc_std_ap integer DEFAULT 0 NOT NULL,
-                              tscore_std_ap integer DEFAULT 0 NOT NULL,
-                              rscore_std_rx integer DEFAULT 0 NOT NULL,
+                              pc_std_ap bigint DEFAULT 0 NOT NULL,
+                              tscore_std_ap bigint DEFAULT 0 NOT NULL,
+                              rscore_std_rx bigint DEFAULT 0 NOT NULL,
                               acc_std_rx real DEFAULT 0.00 NOT NULL,
-                              pc_std_rx integer DEFAULT 0 NOT NULL,
-                              tscore_std_rx integer DEFAULT 0 NOT NULL,
-                              pp_std_rx integer DEFAULT 0 NOT NULL,
-                              pp_std_ap integer DEFAULT 0 NOT NULL,
-                              pp_taiko_rx integer DEFAULT 0 NOT NULL,
-                              pp_catch_rx integer DEFAULT 0 NOT NULL,
-                              mc_std integer DEFAULT 0 NOT NULL,
-                              mc_std_rx integer DEFAULT 0 NOT NULL,
-                              mc_std_ap integer DEFAULT 0 NOT NULL,
-                              mc_taiko integer DEFAULT 0 NOT NULL,
-                              mc_taiko_rx integer DEFAULT 0 NOT NULL,
-                              mc_catch integer DEFAULT 0 NOT NULL,
-                              mc_catch_rx integer DEFAULT 0 NOT NULL,
-                              mc_mania integer DEFAULT 0 NOT NULL
+                              pc_std_rx bigint DEFAULT 0 NOT NULL,
+                              tscore_std_rx bigint DEFAULT 0 NOT NULL,
+                              pp_std_rx bigint DEFAULT 0 NOT NULL,
+                              pp_std_ap bigint DEFAULT 0 NOT NULL,
+                              pp_taiko_rx bigint DEFAULT 0 NOT NULL,
+                              pp_catch_rx bigint DEFAULT 0 NOT NULL,
+                              mc_std bigint DEFAULT 0 NOT NULL,
+                              mc_std_rx bigint DEFAULT 0 NOT NULL,
+                              mc_std_ap bigint DEFAULT 0 NOT NULL,
+                              mc_taiko bigint DEFAULT 0 NOT NULL,
+                              mc_taiko_rx bigint DEFAULT 0 NOT NULL,
+                              mc_catch bigint DEFAULT 0 NOT NULL,
+                              mc_catch_rx bigint DEFAULT 0 NOT NULL,
+                              mc_mania bigint DEFAULT 0 NOT NULL,
+                              pt_std bigint DEFAULT 0 NOT NULL,
+                              pt_std_rx bigint DEFAULT 0 NOT NULL,
+                              pt_std_ap bigint DEFAULT 0 NOT NULL,
+                              pt_taiko bigint DEFAULT 0 NOT NULL,
+                              pt_taiko_rx bigint DEFAULT 0 NOT NULL,
+                              pt_catch bigint DEFAULT 0 NOT NULL,
+                              pt_catch_rx bigint DEFAULT 0 NOT NULL,
+                              pt_mania bigint DEFAULT 0 NOT NULL
 );
 
 
@@ -155,7 +181,9 @@ CREATE TABLE public.maps (
                              status integer NOT NULL,
                              frozen integer NOT NULL,
                              update bigint NOT NULL,
-                             nc bigint DEFAULT 0 NOT NULL
+                             nc bigint DEFAULT 0 NOT NULL,
+                             plays integer DEFAULT 0 NOT NULL,
+                             passes integer DEFAULT 0 NOT NULL
 );
 
 
