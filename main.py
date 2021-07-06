@@ -392,6 +392,52 @@ async def convert_maps():
         log(f'Converted {artist} - {title} [{diff}] into maps table!')
         
     log('Converted all maps!')
+    
+async def convert_client_hashes():
+    gulag_hashes = await glob.sql.fetchall('SELECT * FROM client_hashes')
+    
+    for entry in gulag_hashes:
+        uid = entry['userid']
+        mac_address = entry['adapters']
+        uninstall_id = entry['uninstall_id']
+        disk_serial = entry['disk_serial']
+        ip = entry['ip']
+        occurrences = entry['occurrences']
+        
+        try:
+            await glob.postgres.execute(
+                'INSERT INTO user_hashes ('
+                'uid, mac_address, uninstall_id, disk_serial, ip, occurrences'
+                ') VALUES ('
+                '$1, $2, $3, $4, $5, $6)',
+                uid, mac_address, uninstall_id, disk_serial, ip, occurrences
+            )
+        except Exception:
+            continue # already in db, just skip
+        
+    log('Converted all client hashes!')
+
+async def convert_friends():
+    gulag_friends = await glob.sql.fetchall('SELECT * FROM friendships')
+    
+    for fr in gulag_friends:
+        user1 = fr['user1']
+        user2 = fr['user2']
+
+        await glob.postgres.execute('INSERT INTO friends (user1, user2) VALUES ($1, $2)', user1, user2)
+        
+    log('Converted all friendships!')
+    
+async def convert_achs():
+    gulag_achs = await glob.sql.fetchall('SELECT * FROM user_achievements')
+    
+    for a in gulag_achs:
+        uid = a['userid']
+        ach = a['achid']
+        
+        await glob.postgres.execute('INSERT INTO user_achievements (uid, ach) VALUES ($1, $2)', uid, ach)
+        
+    log('Converted all user achievements!')
 
 input(
     'Please be aware that before running this script, you should have made a blank database in PostgreSQL for Asahi and have a valid gulag database in MySQL. '
@@ -407,5 +453,8 @@ loop.run_until_complete(convert_users())
 loop.run_until_complete(convert_stats())
 loop.run_until_complete(convert_scores())
 loop.run_until_complete(convert_maps())
+loop.run_until_complete(convert_client_hashes())
+loop.run_until_complete(convert_friends())
+loop.run_until_complete(convert_achs())
 loop.run_until_complete(close_dbs())
 log(f'Migration complete in {(time.time() - start) // 60:.2f} minutes!')

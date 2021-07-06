@@ -47,6 +47,12 @@ CREATE TABLE public.user_hashes(
                                    PRIMARY KEY (uid, mac_address, uninstall_id, disk_serial, ip)
 );
 
+CREATE TABLE public.user_achievements(
+    id SERIAL,
+    uid integer NOT NULL,
+    ach integer NOT NULL
+);
+
 CREATE TABLE public.requests(
     id SERIAL,
     requester text NOT NULL,
@@ -61,7 +67,7 @@ CREATE TABLE public.requests(
 --
 
 CREATE TABLE public.friends (
-                                id integer NOT NULL,
+                                id SERIAL,
                                 user1 integer NOT NULL,
                                 user2 integer NOT NULL
 );
