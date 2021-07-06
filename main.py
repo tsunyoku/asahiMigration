@@ -2,6 +2,7 @@ from cmyui import AsyncSQLPool, log, Ansi
 from pathlib import Path
 
 from constants.privs import gulagPrivileges, asahiPrivileges
+from constants.mods import convert
 from objects import glob
 
 import asyncpg
@@ -261,6 +262,72 @@ async def convert_stats():
         log(f'Inserted user ID {id} into stats database!')
         
     log('All stats converted!')
+    
+async def convert_scores():
+    for table in ('scores_vn', 'scores_rx', 'scores_ap'):
+        scores = await glob.sql.fetchall(f'SELECT * FROM {table}')
+        
+        asahi_table = table
+        
+        if table == 'scores_vn':
+            asahi_table = 'scores'
+        
+        for score in scores:
+            id = score['id']
+            md5 = score['map_md5']
+            scr = score['score']
+            pp = score['pp']
+            acc = score['acc']
+            combo = score['max_combo']
+            mods = score['mods']
+            n300 = score['n300']
+            n100 = score['n100']
+            n50 = score['n50']
+            miss = score['nmiss']
+            geki = score['ngeki']
+            katu = score['nkatu']
+            grade = score['grade']
+            status = score['status']
+            mode = score['mode']
+            
+            try: # some use unix, other use timestamp
+                _time = int(score['play_time'])
+            except Exception: # not unix
+                _time = score['play_time'].timestamp()
+                
+            uid = score['userid']
+            
+            try:
+                readable_mods = score['mods_readable']
+            except Exception: # not iteki-based gulag
+                readable_mods = convert(mods)
+            
+            fc = score['perfect']
+            
+            await glob.postgres.execute(
+                f'INSERT INTO {asahi_table} ('
+                'id, md5, score, pp, '
+                'acc, combo, mods, n300, '
+                'n100, n50, miss, geki, '
+                'katu, grade, status, mode, '
+                'time, uid, readable_mods, fc'
+                ') VALUES ('
+                '$1, $2, $3, $4, '
+                '$5, $6, $7, $8, '
+                '$9, $10, $11, $12, '
+                '$13, $14, $15, $16, '
+                '$17, $18, $19, $20'
+                ')',
+                id, md5, scr, pp,
+                acc, combo, mods, n300,
+                n100, n50, miss, geki,
+                katu, grade, status, mode,
+                _time, uid, readable_mods, fc
+            )
+            
+            log(f'Converted score ID {id} on table {asahi_table}!')
+            
+        log(f'Converted all scores on table {asahi_table}!')
 
 input(
     'Please be aware that before running this script, you should have made a blank database in PostgreSQL for Asahi and have a valid gulag database in MySQL. '
@@ -273,5 +340,6 @@ loop.run_until_complete(import_db())
 loop.run_until_complete(startup())
 loop.run_until_complete(convert_users())
 loop.run_until_complete(convert_stats())
+loop.run_until_complete(convert_scores())
 loop.run_until_complete(close_dbs())
 log('Migration complete!')
