@@ -1,5 +1,5 @@
 # asahiMigration
-Migration tool for gulag servers to switch to Asahi.
+Migration tool for gulag/ripple servers to switch to Asahi.
 
 ## Setup
 

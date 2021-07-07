@@ -1,4 +1,9 @@
-gulag_sql = { # input database
+# set to true which you are migrating from.
+# input_sql should be mysql info & db for whichever you are switching from, the migrator will handle the rest
+gulag = True
+ripple = False
+
+input_sql = { # input database
     'db': 'gulag',
     'host': 'localhost',
     'password': 'gay',
@@ -10,10 +15,4 @@ asahi_postgres = { # output database
     'host': 'localhost',
     'password': 'gay',
     'user': 'awesome'
-}
-
-redis = { # used for asahi rankings, this 9 times out of 10 never needs editing so id just leave it as default
-    'host': 'localhost',
-    'db': 0,
-    'password': ''
 }
