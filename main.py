@@ -1,9 +1,9 @@
-from cmyui import AsyncSQLPool, log, Ansi
+from cmyui import log, Ansi
 from pathlib import Path
 
 from objects import glob
+from fatFuckSQL import fatFawkSQL
 
-import asyncpg
 import asyncio
 import uvloop
 import os
@@ -14,16 +14,15 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 async def startup():
     log('Connecting to databases...')
 
-    glob.sql = AsyncSQLPool()
-    await glob.sql.connect(glob.config.input_sql)
+    glob.input = await fatFawkSQL.connect(**glob.config.input_sql)
     log('Connected to MySQL (gulag/ripple)!')
 
-    glob.postgres = await asyncpg.connect(**glob.config.asahi_postgres)
-    log('Connected to PostgreSQL (Asahi)!')
+    glob.output = await fatFawkSQL.connect(**glob.config.output_sql)
+    log('Connected to MySQL (Asahi)!')
 
 async def close_dbs():
-    await glob.sql.close()
-    await glob.postgres.close()
+    await glob.input.close()
+    await glob.output.close()
 
 async def import_db():
     db_file = Path.cwd() / 'ext/db.sql'
@@ -33,13 +32,10 @@ async def import_db():
 
     log('Importing database. Note: You may be asked to enter your password, please do so!')
 
-    # if they're running it again after first time then there's probably an error, lets just drop the database for safety
-    # we need to restart postgres first incase of any dead sessions
-    os.system('sudo /etc/init.d/postgresql restart >/dev/null 2>&1')
-    os.system(f'sudo -u postgres -i psql -c "DROP DATABASE {glob.config.asahi_postgres["database"]};" >/dev/null 2>&1')
-    os.system(f'sudo -u postgres -i psql -c "CREATE DATABASE {glob.config.asahi_postgres["database"]};" >/dev/null 2>&1')
+    os.system(f'sudo mariadb -e "DROP DATABASE {glob.config.output_sql["database"]};" >/dev/null 2>&1')
+    os.system(f'sudo mariadb -e "CREATE DATABASE {glob.config.output_sql["database"]};" >/dev/null 2>&1')
 
-    os.system(f'sudo -u postgres -i psql {glob.config.asahi_postgres["database"]} < {str(db_file)} >/dev/null 2>&1')
+    os.system(f'sudo mariadb {glob.config.output_sql["database"]} < {str(db_file)} >/dev/null 2>&1')
 
     log('Database imported!')
 

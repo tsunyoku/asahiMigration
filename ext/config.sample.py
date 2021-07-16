@@ -10,7 +10,7 @@ input_sql = { # input database
     'user': 'awesome'
 }
 
-asahi_postgres = { # output database
+output_sql = { # output database
     'database': 'asahi',
     'host': 'localhost',
     'password': 'gay',

@@ -1,4 +1,4 @@
-from cmyui import AsyncSQLPool, log, Ansi
+from cmyui import log, Ansi
 
 from constants.privs import gulagPrivileges, asahiPrivileges
 from constants.mods import convert
@@ -32,7 +32,7 @@ async def convert_priv(old_priv):
     return new_priv
 
 async def convert_users():
-    gulag_users = await glob.sql.fetchall('SELECT * FROM users')
+    gulag_users = await glob.input.fetchall('SELECT * FROM users')
 
     for user in gulag_users:
         id = user['id']
@@ -55,24 +55,23 @@ async def convert_users():
         if frozen:
             asahi_priv |= asahiPrivileges.Frozen
 
-        await glob.postgres.execute(
+        await glob.output.execute(
             'INSERT INTO users '
             '(id, name, safe_name, email, pw, country, priv, clan, freeze_timer, registered_at, silence_end, donor_end) '
-            'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
-            id, name, safe_name, email, pw, country, int(asahi_priv), clan, freeze, creation, silence, donor
+            'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+            [id, name, safe_name, email, pw, country, int(asahi_priv), clan, freeze, creation, silence, donor]
         )
 
         log(f'Inserted {name} into users database!')
 
     # fix auto increment
-    last_id = gulag_users[-1]['id']
-    await glob.postgres.execute(f'CREATE SEQUENCE users_id_seq START {last_id + 1};')
-    await glob.postgres.execute("ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);")
+    last_id = int(gulag_users[-1]['id'])
+    await glob.output.execute(f'ALTER TABLE users AUTO_INCREMENT={last_id + 1}')
 
     log('All users converted!')
     
 async def convert_stats():
-    gulag_stats = await glob.sql.fetchall('SELECT * FROM stats')
+    gulag_stats = await glob.input.fetchall('SELECT * FROM stats')
     
     for user in gulag_stats:
         id = user['id']
@@ -149,7 +148,7 @@ async def convert_stats():
         mc_std_ap = user['maxcombo_ap_std']
         
         # LOL
-        await glob.postgres.execute(
+        await glob.output.execute(
             'INSERT INTO stats (id, '
             'tscore_std, tscore_taiko, tscore_catch, tscore_mania, '
             'rscore_std, rscore_taiko, rscore_catch, rscore_mania, '
@@ -173,29 +172,29 @@ async def convert_stats():
             'acc_std_ap, '
             'mc_std_ap) '
             'VALUES ('
-            '$1, $2, $3, $4,'
-            '$5, $6, $7, $8,'
-            '$9, $10, $11, $12,'
-            '$13, $14, $15, $16,'
-            '$17, $18, $19, $20,'
-            '$21, $22, $23, $24,'
-            '$25, $26, $27, $28,'
-            '$29, $30, $31,'
-            '$32, $33, $34,'
-            '$35, $36, $37,'
-            '$38, $39, $40,'
-            '$41, $42, $43,'
-            '$44, $45, $46,'
-            '$47, $48, $49,'
-            '$50,'
-            '$51,'
-            '$52,'
-            '$53,'
-            '$54,'
-            '$55,'
-            '$56,'
-            '$57)',
-            id,
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s, %s, %s,'
+            '%s,'
+            '%s,'
+            '%s,'
+            '%s,'
+            '%s,'
+            '%s,'
+            '%s,'
+            '%s)',
+            [id,
             tscore_std, tscore_taiko, tscore_catch, tscore_mania,
             rscore_std, rscore_taiko, rscore_catch, rscore_mania,
             pp_std, pp_taiko, pp_catch, pp_mania,
@@ -216,21 +215,20 @@ async def convert_stats():
             pc_std_ap,
             pt_std_ap,
             acc_std_ap,
-            mc_std_ap
+            mc_std_ap]
         )
         
         log(f'Inserted user ID {id} into stats database!')
 
     # fix auto increment
-    last_id = gulag_stats[-1]['id']
-    await glob.postgres.execute(f'CREATE SEQUENCE stats_id_seq START {last_id + 1};')
-    await glob.postgres.execute("ALTER TABLE ONLY public.stats ALTER COLUMN id SET DEFAULT nextval('stats_id_seq'::regclass);")
+    last_id = int(gulag_stats[-1]['id'])
+    await glob.output.execute(f"ALTER TABLE stats AUTO_INCREMENT={last_id + 1}")
 
     log('All stats converted!')
     
 async def convert_scores():
     for table in ('scores_vn', 'scores_rx', 'scores_ap'):
-        scores = await glob.sql.fetchall(f'SELECT * FROM {table}')
+        scores = await glob.input.fetchall(f'SELECT * FROM {table}')
         
         asahi_table = table
         
@@ -269,7 +267,7 @@ async def convert_scores():
             
             fc = score['perfect']
             
-            await glob.postgres.execute(
+            await glob.output.execute(
                 f'INSERT INTO {asahi_table} ('
                 'id, md5, score, pp, '
                 'acc, combo, mods, n300, '
@@ -277,29 +275,28 @@ async def convert_scores():
                 'katu, grade, status, mode, '
                 'time, uid, readable_mods, fc'
                 ') VALUES ('
-                '$1, $2, $3, $4, '
-                '$5, $6, $7, $8, '
-                '$9, $10, $11, $12, '
-                '$13, $14, $15, $16, '
-                '$17, $18, $19, $20'
+                '%s, %s, %s, %s, '
+                '%s, %s, %s, %s, '
+                '%s, %s, %s, %s, '
+                '%s, %s, %s, %s, '
+                '%s, %s, %s, %s'
                 ')',
-                id, md5, scr, pp,
+                [id, md5, scr, pp,
                 acc, combo, mods, n300,
                 n100, n50, miss, geki,
                 katu, grade, status, mode,
-                _time, uid, readable_mods, fc
+                _time, uid, readable_mods, fc]
             )
             
             log(f'Converted score ID {id} on table {asahi_table}!')
 
         # fix auto increment
-        last_id = scores[-1]['id']
-        await glob.postgres.execute(f'CREATE SEQUENCE {asahi_table}_id_seq START {last_id + 1};')
-        await glob.postgres.execute(f"ALTER TABLE ONLY public.{asahi_table} ALTER COLUMN id SET DEFAULT nextval('{asahi_table}_id_seq'::regclass);")
+        last_id = int(scores[-1]['id'])
+        await glob.output.execute(f"ALTER TABLE {asahi_table} AUTO_INCREMENT={last_id + 1}")
         log(f'Converted all scores on table {asahi_table}!')
 
 async def convert_maps():
-    gulag_maps = await glob.sql.fetchall('SELECT * FROM maps')
+    gulag_maps = await glob.input.fetchall('SELECT * FROM maps')
     
     for _map in gulag_maps:
         id = _map['id']
@@ -327,7 +324,7 @@ async def convert_maps():
         plays = _map['plays']
         passes = _map['passes']
         
-        await glob.postgres.execute(
+        await glob.output.execute(
             'INSERT INTO maps ('
             'id, sid, md5, '
             'bpm, cs, ar, od, hp, sr, mode, '
@@ -335,17 +332,17 @@ async def convert_maps():
             'frozen, update, nc, '
             'plays, passes'
             ') VALUES ('
-            '$1, $2, $3, '
-            '$4, $5, $6, $7, $8, $9, $10, '
-            '$11, $12, $13, $14, $15, '
-            '$16, $17, $18, '
-            '$19, $20'
+            '%s, %s, %s, '
+            '%s, %s, %s, %s, %s, %s, %s, '
+            '%s, %s, %s, %s, %s, '
+            '%s, %s, %s, '
+            '%s, %s'
             ')',
-            id, sid, md5,
+            [id, sid, md5,
             bpm, cs, ar, od, hp, sr, mode,
             artist, title, diff, mapper, status,
             frozen, update, nc,
-            plays, passes
+            plays, passes]
         )
         
         log(f'Converted {artist} - {title} [{diff}] into maps table!')
@@ -353,7 +350,7 @@ async def convert_maps():
     log('Converted all maps!')
     
 async def convert_client_hashes():
-    gulag_hashes = await glob.sql.fetchall('SELECT * FROM client_hashes')
+    gulag_hashes = await glob.input.fetchall('SELECT * FROM client_hashes')
     
     for entry in gulag_hashes:
         uid = entry['userid']
@@ -364,12 +361,12 @@ async def convert_client_hashes():
         occurrences = entry['occurrences']
         
         try:
-            await glob.postgres.execute(
+            await glob.output.execute(
                 'INSERT INTO user_hashes ('
                 'uid, mac_address, uninstall_id, disk_serial, ip, occurrences'
                 ') VALUES ('
-                '$1, $2, $3, $4, $5, $6)',
-                uid, mac_address, uninstall_id, disk_serial, ip, occurrences
+                '%s, %s, %s, %s, %s, %s)',
+                [uid, mac_address, uninstall_id, disk_serial, ip, occurrences]
             )
         except Exception:
             continue # already in db, just skip
@@ -377,23 +374,23 @@ async def convert_client_hashes():
     log('Converted all client hashes!')
 
 async def convert_friends():
-    gulag_friends = await glob.sql.fetchall('SELECT * FROM friendships')
+    gulag_friends = await glob.input.fetchall('SELECT * FROM friendships')
     
     for fr in gulag_friends:
         user1 = fr['user1']
         user2 = fr['user2']
 
-        await glob.postgres.execute('INSERT INTO friends (user1, user2) VALUES ($1, $2)', user1, user2)
+        await glob.output.execute('INSERT INTO friends (user1, user2) VALUES (%s, %s)', [user1, user2])
         
     log('Converted all friendships!')
     
 async def convert_achs():
-    gulag_achs = await glob.sql.fetchall('SELECT * FROM user_achievements')
+    gulag_achs = await glob.input.fetchall('SELECT * FROM user_achievements')
     
     for a in gulag_achs:
         uid = a['userid']
         ach = a['achid']
         
-        await glob.postgres.execute('INSERT INTO user_achievements (uid, ach) VALUES ($1, $2)', uid, ach)
+        await glob.output.execute('INSERT INTO user_achievements (uid, ach) VALUES (%s, %s)', [uid, ach])
         
     log('Converted all user achievements!')
