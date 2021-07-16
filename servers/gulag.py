@@ -32,7 +32,7 @@ async def convert_priv(old_priv):
     return new_priv
 
 async def convert_users():
-    gulag_users = await glob.input.fetchall('SELECT * FROM users')
+    gulag_users = await glob.input.fetch('SELECT * FROM users')
 
     for user in gulag_users:
         id = user['id']
@@ -71,7 +71,7 @@ async def convert_users():
     log('All users converted!')
     
 async def convert_stats():
-    gulag_stats = await glob.input.fetchall('SELECT * FROM stats')
+    gulag_stats = await glob.input.fetch('SELECT * FROM stats')
     
     for user in gulag_stats:
         id = user['id']
@@ -228,7 +228,7 @@ async def convert_stats():
     
 async def convert_scores():
     for table in ('scores_vn', 'scores_rx', 'scores_ap'):
-        scores = await glob.input.fetchall(f'SELECT * FROM {table}')
+        scores = await glob.input.fetch(f'SELECT * FROM {table}')
         
         asahi_table = table
         
@@ -296,7 +296,7 @@ async def convert_scores():
         log(f'Converted all scores on table {asahi_table}!')
 
 async def convert_maps():
-    gulag_maps = await glob.input.fetchall('SELECT * FROM maps')
+    gulag_maps = await glob.input.fetch('SELECT * FROM maps')
     
     for _map in gulag_maps:
         id = _map['id']
@@ -350,7 +350,7 @@ async def convert_maps():
     log('Converted all maps!')
     
 async def convert_client_hashes():
-    gulag_hashes = await glob.input.fetchall('SELECT * FROM client_hashes')
+    gulag_hashes = await glob.input.fetch('SELECT * FROM client_hashes')
     
     for entry in gulag_hashes:
         uid = entry['userid']
@@ -374,7 +374,7 @@ async def convert_client_hashes():
     log('Converted all client hashes!')
 
 async def convert_friends():
-    gulag_friends = await glob.input.fetchall('SELECT * FROM friendships')
+    gulag_friends = await glob.input.fetch('SELECT * FROM friendships')
     
     for fr in gulag_friends:
         user1 = fr['user1']
@@ -385,7 +385,7 @@ async def convert_friends():
     log('Converted all friendships!')
     
 async def convert_achs():
-    gulag_achs = await glob.input.fetchall('SELECT * FROM user_achievements')
+    gulag_achs = await glob.input.fetch('SELECT * FROM user_achievements')
     
     for a in gulag_achs:
         uid = a['userid']
