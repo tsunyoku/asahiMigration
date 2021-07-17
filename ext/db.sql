@@ -301,11 +301,11 @@ CREATE TABLE `users` (
   `country` char(2) NOT NULL DEFAULT 'xx',
   `priv` int(11) NOT NULL DEFAULT '1',
   `safe_name` varchar(16) NOT NULL,
-  `clan` int(11) NOT NULL,
-  `freeze_timer` bigint(20) NOT NULL,
+  `clan` int(11) NOT NULL DEFAULT '0',
+  `freeze_timer` bigint(20) NOT NULL DEFAULT '0',
   `registered_at` bigint(20) NOT NULL,
-  `silence_end` bigint(20) NOT NULL,
-  `donor_end` bigint(20) NOT NULL
+  `silence_end` bigint(20) NOT NULL DEFAULT '0',
+  `donor_end` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
