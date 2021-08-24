@@ -16,3 +16,7 @@ output_sql = { # output database
     'password': 'gay',
     'user': 'awesome'
 }
+
+old_path = '' # old gulag/ripple path
+old_path_cheat = '' # old gulag cheat 
+new_path = '' # where asahi is kept

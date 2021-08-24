@@ -32,22 +32,22 @@ async def import_db():
 
     log('Importing database. Note: You may be asked to enter your password, please do so!')
 
-    os.system(f'sudo mariadb -e "DROP DATABASE {glob.config.output_sql["database"]};" >/dev/null 2>&1')
-    os.system(f'sudo mariadb -e "CREATE DATABASE {glob.config.output_sql["database"]};" >/dev/null 2>&1')
+    os.system(f'sudo mariadb -e "DROP DATABASE {glob.config.output_sql["db"]};" >/dev/null 2>&1')
+    os.system(f'sudo mariadb -e "CREATE DATABASE {glob.config.output_sql["db"]};" >/dev/null 2>&1')
 
-    os.system(f'sudo mariadb {glob.config.output_sql["database"]} < {str(db_file)} >/dev/null 2>&1')
+    os.system(f'sudo mariadb {glob.config.output_sql["db"]} < {str(db_file)} >/dev/null 2>&1')
 
     log('Database imported!')
 
 if glob.config.gulag:
-    from servers.gulag import convert_users, convert_stats, convert_scores, convert_maps, convert_client_hashes, convert_friends, convert_achs
+    from servers.gulag import convert_users, convert_stats, convert_scores, convert_maps, convert_client_hashes, convert_friends, convert_achs, convert_clans, convert_favourites, convert_ratings, migrate_data, migrate_data_cheat, convert_achs_cheat, convert_scores_cheat, convert_stats_cheat
 elif glob.config.ripple:
-    from servers.ripple import convert_users, convert_stats, convert_scores, convert_maps, convert_client_hashes, convert_friends, convert_achs
+    from servers.ripple import convert_users, convert_stats, convert_scores, convert_maps, convert_client_hashes, convert_friends, convert_achs, convert_clans, convert_favourites, convert_ratings, migrate_data, migrate_data_cheat, convert_achs_cheat, convert_scores_cheat, convert_stats_cheat
 else:
     raise RuntimeError('Please set either gulag or ripple to True!')
 
 input(
-    'Please be aware that before running this script, you should have made a blank database in PostgreSQL for Asahi and have a valid gulag database in MySQL. '
+    'Please be aware that before running this script, you should have made a blank database Asahi and have a valid gulag database in MySQL. '
     'If not, please sort that now and run again (Ctrl + C to exit). '
     'Otherwise, press any key to continue!'
 )
@@ -58,10 +58,18 @@ loop.run_until_complete(import_db())
 loop.run_until_complete(startup())
 loop.run_until_complete(convert_users())
 loop.run_until_complete(convert_stats())
+loop.run_until_complete(convert_stats_cheat())
 loop.run_until_complete(convert_scores())
+loop.run_until_complete(convert_scores_cheat())
 loop.run_until_complete(convert_maps())
 loop.run_until_complete(convert_client_hashes())
 loop.run_until_complete(convert_friends())
 loop.run_until_complete(convert_achs())
+loop.run_until_complete(convert_clans())
+loop.run_until_complete(convert_favourites())
+loop.run_until_complete(convert_ratings())
+loop.run_until_complete(convert_achs_cheat())
 loop.run_until_complete(close_dbs())
+loop.run_until_complete(migrate_data())
+loop.run_until_complete(migrate_data_cheat())
 log(f'Migration complete in {(time.time() - start) // 60:.2f} minutes!')

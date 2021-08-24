@@ -224,6 +224,99 @@ CREATE TABLE `scores_rx` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `scores`
+--
+
+CREATE TABLE `scores_cheat` (
+  `id` int(11) NOT NULL,
+  `md5` char(32) NOT NULL,
+  `score` bigint(20) NOT NULL,
+  `acc` float NOT NULL,
+  `pp` float NOT NULL,
+  `combo` int(11) NOT NULL,
+  `mods` int(11) NOT NULL,
+  `n300` int(11) NOT NULL,
+  `geki` int(11) NOT NULL,
+  `n100` int(11) NOT NULL,
+  `katu` int(11) NOT NULL,
+  `n50` int(11) NOT NULL,
+  `miss` int(11) NOT NULL,
+  `grade` char(1) NOT NULL DEFAULT 'F',
+  `status` int(11) NOT NULL,
+  `mode` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `readable_mods` text NOT NULL,
+  `fc` int(11) NOT NULL,
+  `osuver` int(11) DEFAULT NULL,
+  `timewarp` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scores_ap`
+--
+
+CREATE TABLE `scores_ap_cheat` (
+  `id` int(11) NOT NULL,
+  `md5` char(32) NOT NULL,
+  `score` bigint(20) NOT NULL,
+  `acc` float NOT NULL,
+  `pp` float NOT NULL,
+  `combo` int(11) NOT NULL,
+  `mods` int(11) NOT NULL,
+  `n300` int(11) NOT NULL,
+  `geki` int(11) NOT NULL,
+  `n100` int(11) NOT NULL,
+  `katu` int(11) NOT NULL,
+  `n50` int(11) NOT NULL,
+  `miss` int(11) NOT NULL,
+  `grade` char(1) NOT NULL DEFAULT 'F',
+  `status` int(11) NOT NULL,
+  `mode` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `readable_mods` text NOT NULL,
+  `fc` int(11) NOT NULL,
+  `osuver` int(11) DEFAULT NULL,
+  `timewarp` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scores_rx`
+--
+
+CREATE TABLE `scores_rx_cheat` (
+  `id` int(11) NOT NULL,
+  `md5` char(32) NOT NULL,
+  `score` bigint(20) NOT NULL,
+  `acc` float NOT NULL,
+  `pp` float NOT NULL,
+  `combo` int(11) NOT NULL,
+  `mods` int(11) NOT NULL,
+  `n300` int(11) NOT NULL,
+  `geki` int(11) NOT NULL,
+  `n100` int(11) NOT NULL,
+  `katu` int(11) NOT NULL,
+  `n50` int(11) NOT NULL,
+  `miss` int(11) NOT NULL,
+  `grade` char(1) NOT NULL DEFAULT 'F',
+  `status` int(11) NOT NULL,
+  `mode` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `readable_mods` text NOT NULL,
+  `fc` int(11) NOT NULL,
+  `osuver` int(11) DEFAULT NULL,
+  `timewarp` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `stats`
 --
 
@@ -284,7 +377,64 @@ CREATE TABLE `stats` (
   `pt_taiko_rx` bigint(20) NOT NULL DEFAULT '0',
   `pt_catch` bigint(20) NOT NULL DEFAULT '0',
   `pt_catch_rx` bigint(20) NOT NULL DEFAULT '0',
-  `pt_mania` bigint(20) NOT NULL DEFAULT '0'
+  `pt_mania` bigint(20) NOT NULL DEFAULT '0',
+
+  `rscore_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_std_cheat` double NOT NULL DEFAULT '0',
+  `pc_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_mania_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_mania_cheat` double NOT NULL DEFAULT '0',
+  `pc_mania_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_mania_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_catch_cheat` double NOT NULL DEFAULT '0',
+  `pc_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_taiko_cheat` double NOT NULL DEFAULT '0',
+  `pc_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_mania_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_catch_rx_cheat` double NOT NULL DEFAULT '0',
+  `pc_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_taiko_rx_cheat` double NOT NULL DEFAULT '0',
+  `pc_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_std_ap_cheat` double NOT NULL DEFAULT '0',
+  `pc_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `rscore_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `acc_std_rx_cheat` double NOT NULL DEFAULT '0',
+  `pc_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `tscore_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pp_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `mc_mania_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_std_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_std_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_std_ap_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_taiko_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_taiko_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_catch_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_catch_rx_cheat` bigint(20) NOT NULL DEFAULT '0',
+  `pt_mania_cheat` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -305,7 +455,10 @@ CREATE TABLE `users` (
   `freeze_timer` bigint(20) NOT NULL DEFAULT '0',
   `registered_at` bigint(20) NOT NULL,
   `silence_end` bigint(20) NOT NULL DEFAULT '0',
-  `donor_end` bigint(20) NOT NULL DEFAULT '0'
+  `donor_end` bigint(20) NOT NULL DEFAULT '0',
+  `userpage` text NOT NULL,
+  `playstyle` int(11) NOT NULL DEFAULT '0',
+  `aka` varchar(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -315,6 +468,20 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `user_achievements` (
+  `id` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `ach` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_achievements`
+--
+
+CREATE TABLE `user_achievements_cheat` (
   `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `ach` int(11) NOT NULL
@@ -401,6 +568,24 @@ ALTER TABLE `scores_rx`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `scores`
+--
+ALTER TABLE `scores_cheat`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `scores_ap`
+--
+ALTER TABLE `scores_ap_cheat`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `scores_rx`
+--
+ALTER TABLE `scores_rx_cheat`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `stats`
 --
 ALTER TABLE `stats`
@@ -418,6 +603,14 @@ ALTER TABLE `users`
 ALTER TABLE `user_achievements`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uid` (`uid`,`ach`);
+
+--
+-- Indexes for table `user_achievements`
+--
+ALTER TABLE `user_achievements_cheat`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uid` (`uid`,`ach`);
+
 
 --
 -- Indexes for table `user_hashes`
@@ -470,6 +663,21 @@ ALTER TABLE `scores_ap`
 ALTER TABLE `scores_rx`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `scores`
+--
+ALTER TABLE `scores_cheat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `scores_ap`
+--
+ALTER TABLE `scores_ap_cheat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `scores_rx`
+--
+ALTER TABLE `scores_rx_cheat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `stats`
 --
 ALTER TABLE `stats`
@@ -484,6 +692,41 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_achievements`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `user_achievements_cheat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Table structure for table `favourites`
+--
+
+CREATE TABLE `favourites` (
+  `uid` int(11) NOT NULL,
+  `sid` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Table structure for table `ratings`
+--
+
+CREATE TABLE `ratings` (
+  `uid` int(11) NOT NULL,
+  `md5` varchar(64) NOT NULL,
+  `rating` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+--
+-- Indexes for table `favourites`
+--
+ALTER TABLE `favourites`
+  ADD UNIQUE KEY `uid` (`uid`,`sid`);
+
+--
+-- Indexes for table `ratings`
+--
+ALTER TABLE `ratings`
+  ADD UNIQUE KEY `uid` (`uid`,`md5`,`rating`);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
