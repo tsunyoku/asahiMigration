@@ -11,7 +11,7 @@ input_sql = { # input database
 }
 
 output_sql = { # output database
-    'database': 'asahi',
+    'db': 'asahi',
     'host': 'localhost',
     'password': 'gay',
     'user': 'awesome'
